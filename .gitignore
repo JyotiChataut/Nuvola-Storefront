@@ -1,0 +1,12 @@
+.local/
+*.local
+*.bak
+*.swp
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+out/
+dist/
+coverage/

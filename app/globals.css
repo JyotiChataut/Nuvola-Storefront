@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dynamic live-mode parameter */
+  --p-color-amount: 0.5;
+
+  /* Canvas & Surface Tokens */
+  --canvas: #FFFDF9;
+  --canvas-soft: #F7F4EE;
+  --canvas-strong: #EDEAD3;
+
+  /* Typography / Ink Tokens */
+  --ink: #1A1A17;
+  --ink-body: #3D3D37;
+  --ink-muted: #605E56;
+  --ink-soft: #807D73;
+
+  /* Brand Action & Selection Tokens */
+  --forest: #2D6A4F;
+  --forest-hover: #1B4332;
+  --forest-disabled: #749A86;
+  --sage: #6B8F71;
+  --sage-light: #D4E2D4;
+
+  /* Semantic State Tokens */
+  --terracotta: #8B4F21;
+  --vermilion: #C4301C;
+  --amber: #8B6914;
+
+  /* Hairlines & Borders */
+  --hairline: #D5D1C7;
+  --hairline-soft: #E8E4DB;
+  --border-strong: #7A7668;
+}
+
+body {
+  background-color: var(--canvas);
+  color: var(--ink);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular figures for pricing and inventory calculations */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
