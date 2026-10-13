@@ -1,12 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import { Category } from '@/types';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  categories: Category[];
+}
+
+export const Footer: React.FC<FooterProps> = ({ categories }) => {
   return (
     <footer className="bg-canvas border-t border-hairline py-16 text-xs text-ink-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-          {/* Brand Mission Column */}
           <div className="col-span-2 space-y-3">
             <Link href="/" className="text-xl font-bold text-ink flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-forest inline-block"></span>
@@ -20,14 +24,27 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Catalog Columns */}
           <div className="space-y-2">
             <h4 className="font-semibold text-ink text-xs uppercase tracking-wider">Catalog</h4>
             <ul className="space-y-1.5">
-              <li><Link href="#categories" className="hover:text-forest transition-colors">Ceramics & Vases</Link></li>
-              <li><Link href="#categories" className="hover:text-forest transition-colors">Loomed Linens</Link></li>
-              <li><Link href="#categories" className="hover:text-forest transition-colors">Turned Wood</Link></li>
-              <li><Link href="#categories" className="hover:text-forest transition-colors">Mouthblown Glass</Link></li>
+              {categories.slice(0, 6).map((category) => (
+                <li key={category.id}>
+                  <Link
+                    href={`/categories/${category.slug}`}
+                    className="hover:text-forest transition-colors"
+                  >
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href="/#categories"
+                  className="text-forest font-medium hover:text-forest-hover transition-colors"
+                >
+                  All categories &rarr;
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -52,7 +69,6 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Legal & Attribution */}
         <div className="pt-8 border-t border-hairline-soft flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
           <p>© {new Date().getFullYear()} Nuvola Marketplace Inc. All artisan works property of respective ateliers.</p>
           <div className="flex items-center gap-4">

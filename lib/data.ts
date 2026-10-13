@@ -1,12 +1,14 @@
-import { Product, Category, Announcement } from "@/types";
-
-/**
- * DEMONSTRATION CATALOG - NOT PRODUCTION DATA.
- *
- * Every product, studio, price, and image below is placeholder demonstration
- * data. Nothing here represents a real, verified seller, review, discount, or
- * availability claim. Product photography is licensed stock imagery.
- */
+import type {
+  Announcement,
+  CatalogRepository,
+  Category,
+  Product,
+} from "@/types";
+import {
+  LocalDemoCatalogRepository,
+  type DemoCategory,
+  type DemoProduct,
+} from "@/lib/catalog/repository";
 
 export const ANNOUNCEMENT_DATA: Announcement = {
   id: "ann-1",
@@ -15,7 +17,7 @@ export const ANNOUNCEMENT_DATA: Announcement = {
   linkHref: "#editorial",
 };
 
-export const CATEGORIES_DATA: Category[] = [
+export const CATEGORIES_DATA: DemoCategory[] = [
   {
     id: "cat-ceramics",
     name: "Ceramics & Stoneware",
@@ -130,7 +132,7 @@ export const CATEGORIES_DATA: Category[] = [
   },
 ];
 
-export const ALL_PRODUCTS: Product[] = [
+export const ALL_PRODUCTS: DemoProduct[] = [
   {
     id: "prod-ash-glazed-ribbed-stoneware-vase",
     title: "Ash-Glazed Ribbed Stoneware Vase",
@@ -150,7 +152,8 @@ export const ALL_PRODUCTS: Product[] = [
     reviewCount: 0,
     stockCount: 18,
     image: "/images/products/stoneware-vase.jpg",
-    imageAlt: "Ash-Glazed Ribbed Stoneware Vase - demonstration product photograph",
+    imageAlt:
+      "Ash-Glazed Ribbed Stoneware Vase - demonstration product photograph",
     gallery: [
       "/images/products/stoneware-vase.jpg",
       "/images/products/ash-glazed-ribbed-stoneware-vase-2.jpg",
@@ -179,7 +182,8 @@ export const ALL_PRODUCTS: Product[] = [
     reviewCount: 0,
     stockCount: 18,
     image: "/images/products/linen-throw.jpg",
-    imageAlt: "Washed European Flax Linen Throw - demonstration product photograph",
+    imageAlt:
+      "Washed European Flax Linen Throw - demonstration product photograph",
     gallery: [
       "/images/products/linen-throw.jpg",
       "/images/products/washed-european-flax-linen-throw-2.jpg",
@@ -207,7 +211,8 @@ export const ALL_PRODUCTS: Product[] = [
     reviewCount: 0,
     stockCount: 18,
     image: "/images/products/walnut-board.jpg",
-    imageAlt: "End-Grain Black Walnut Prep Board - demonstration product photograph",
+    imageAlt:
+      "End-Grain Black Walnut Prep Board - demonstration product photograph",
     gallery: [
       "/images/products/walnut-board.jpg",
       "/images/products/end-grain-black-walnut-prep-board-2.jpg",
@@ -235,7 +240,8 @@ export const ALL_PRODUCTS: Product[] = [
     reviewCount: 0,
     stockCount: 18,
     image: "/images/products/amber-tumblers.jpg",
-    imageAlt: "Fluted Amber Glass Sipping Tumblers (Set of 2) - demonstration product photograph",
+    imageAlt:
+      "Fluted Amber Glass Sipping Tumblers (Set of 2) - demonstration product photograph",
     gallery: [
       "/images/products/amber-tumblers.jpg",
       "/images/products/fluted-amber-glass-tumblers-2.jpg",
@@ -344,7 +350,8 @@ export const ALL_PRODUCTS: Product[] = [
     reviewCount: 0,
     stockCount: 18,
     image: "/images/products/hand-finished-sterling-pendant-1.jpg",
-    imageAlt: "Hand-Finished Sterling Pendant - demonstration product photograph",
+    imageAlt:
+      "Hand-Finished Sterling Pendant - demonstration product photograph",
     gallery: [
       "/images/products/hand-finished-sterling-pendant-1.jpg",
       "/images/products/hand-finished-sterling-pendant-2.jpg",
@@ -508,7 +515,8 @@ export const ALL_PRODUCTS: Product[] = [
     reviewCount: 0,
     stockCount: 18,
     image: "/images/products/vegetable-tanned-bifold-wallet-1.jpg",
-    imageAlt: "Vegetable-Tanned Bifold Wallet - demonstration product photograph",
+    imageAlt:
+      "Vegetable-Tanned Bifold Wallet - demonstration product photograph",
     gallery: [
       "/images/products/vegetable-tanned-bifold-wallet-1.jpg",
       "/images/products/vegetable-tanned-bifold-wallet-2.jpg",
@@ -753,7 +761,8 @@ export const ALL_PRODUCTS: Product[] = [
     reviewCount: 0,
     stockCount: 18,
     image: "/images/products/certified-pre-owned-smartphone-1.jpg",
-    imageAlt: "Certified Pre-Owned Smartphone - demonstration product photograph",
+    imageAlt:
+      "Certified Pre-Owned Smartphone - demonstration product photograph",
     gallery: [
       "/images/products/certified-pre-owned-smartphone-1.jpg",
       "/images/products/certified-pre-owned-smartphone-2.jpg",
@@ -1065,36 +1074,43 @@ export const ALL_PRODUCTS: Product[] = [
   },
 ];
 
+export const catalogRepository: CatalogRepository =
+  new LocalDemoCatalogRepository({
+    announcement: ANNOUNCEMENT_DATA,
+    categories: CATEGORIES_DATA,
+    products: ALL_PRODUCTS,
+  });
+
 export async function getAnnouncement(): Promise<Announcement> {
-  return ANNOUNCEMENT_DATA;
+  return catalogRepository.getAnnouncement();
 }
 export async function getCategories(): Promise<Category[]> {
-  return CATEGORIES_DATA;
+  return catalogRepository.getCategories();
 }
 export async function getTrendingProducts(): Promise<Product[]> {
-  return ALL_PRODUCTS.filter((p) => p.isNew || p.rating >= 4.5);
+  return catalogRepository.getTrendingProducts();
 }
 export async function getAllProducts(): Promise<Product[]> {
-  return ALL_PRODUCTS;
+  return catalogRepository.getAllProducts();
 }
 export async function getProductById(id: string): Promise<Product | undefined> {
-  return ALL_PRODUCTS.find((p) => p.id === id);
+  return catalogRepository.getProductById(id);
 }
 export async function getProductBySlug(
   slug: string,
 ): Promise<Product | undefined> {
-  return ALL_PRODUCTS.find((p) => p.slug === slug);
+  return catalogRepository.getProductBySlug(slug);
 }
 export async function getProductsByCategory(
   categorySlug: string,
 ): Promise<Product[]> {
-  return ALL_PRODUCTS.filter((p) => p.categorySlug === categorySlug);
+  return catalogRepository.getProductsByCategory(categorySlug);
 }
 export async function getCategoryBySlug(
   slug: string,
 ): Promise<Category | undefined> {
-  return CATEGORIES_DATA.find((c) => c.slug === slug);
+  return catalogRepository.getCategoryBySlug(slug);
 }
-export async function getFeaturedProducts(): Promise<Product[]> {
-  return ALL_PRODUCTS.slice(0, 4);
+export async function getFeaturedProducts(limit?: number): Promise<Product[]> {
+  return catalogRepository.getFeaturedProducts(limit);
 }

@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { X, Trash2, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useStorefront } from '@/context/storefront-context';
+import { formatPrice } from '@/lib/format';
 
 export const CartDrawer: React.FC = () => {
   const { isCartOpen, setIsCartOpen, cart, removeFromCart, updateQuantity, cartSubtotal } = useStorefront();
@@ -90,8 +91,8 @@ export const CartDrawer: React.FC = () => {
                 >
                   <div className="relative w-16 h-20 bg-canvas rounded-sm overflow-hidden shrink-0 border border-hairline-soft">
                     <Image
-                      src={item.product.image}
-                      alt={item.product.title}
+                      src={item.product.image.src}
+                      alt={item.product.image.alt}
                       fill
                       className="object-cover"
                     />
@@ -103,7 +104,7 @@ export const CartDrawer: React.FC = () => {
                       {item.product.title}
                     </h4>
                     <p className="text-xs font-bold text-ink tabular-nums">
-                      ${item.product.price}
+                      {formatPrice(item.product.price, item.product.currency)}
                     </p>
 
                     <div className="flex items-center gap-3 pt-1">
@@ -147,7 +148,7 @@ export const CartDrawer: React.FC = () => {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-ink-muted">Subtotal</span>
                 <span className="font-bold text-ink text-base tabular-nums">
-                  ${cartSubtotal}
+                  {formatPrice(cartSubtotal)}
                 </span>
               </div>
               <p className="text-[11px] text-ink-muted leading-relaxed">

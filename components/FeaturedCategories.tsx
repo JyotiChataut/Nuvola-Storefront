@@ -27,13 +27,13 @@ export const FeaturedCategories: React.FC<FeaturedCategoriesProps> = ({ categori
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              href={`#trending`}
+              href={`/categories/${cat.slug}`}
               className="group relative flex flex-col rounded-md overflow-hidden bg-canvas-soft border border-hairline hover:border-sage transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-forest"
             >
               <div className="relative aspect-square w-full overflow-hidden bg-canvas-soft">
                 <Image
-                  src={cat.image}
-                  alt={cat.name}
+                  src={cat.image.src}
+                  alt={cat.image.alt}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 280px"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
