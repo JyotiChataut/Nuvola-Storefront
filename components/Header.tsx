@@ -11,6 +11,11 @@ interface HeaderProps {
   categories: Category[];
 }
 
+const VISIBLE_CATEGORY_LIMIT = 10;
+
+const NAV_ITEM =
+  'flex h-11 items-center rounded-sm px-2 -mx-2 text-caption transition-[transform,color,background-color,box-shadow] duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-forest hover:bg-canvas-soft focus-visible:bg-canvas-soft hover:shadow-lift focus-visible:shadow-lift motion-safe:hover:-translate-y-0.5 motion-safe:focus-visible:-translate-y-0.5';
+
 export const Header: React.FC<HeaderProps> = ({ categories }) => {
   const { cartCount, wishlist, setIsCartOpen } = useStorefront();
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
@@ -54,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
           <button
             type="button"
             onClick={() => setIsCatalogOpen((open) => !open)}
-            className="flex items-center gap-2 px-2.5 h-10 text-ink hover:text-forest hover:bg-canvas-soft rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-forest transition-colors"
+            className="flex items-center gap-2 px-2.5 h-10 text-ink hover:text-forest hover:bg-canvas-soft rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-forest transition-colors lg:hidden"
             aria-expanded={isCatalogOpen}
             aria-controls="catalog-dropdown"
             aria-haspopup="true"
@@ -150,8 +155,27 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="no-scrollbar overflow-x-auto">
-            <ul className="mx-auto flex w-max min-w-full items-center justify-center gap-x-4 xl:gap-x-5 h-11 whitespace-nowrap">
-              {categories.map((category) => {
+            <ul className="flex w-max min-w-full items-center gap-x-4 xl:gap-x-5 h-11 whitespace-nowrap">
+              <li className="shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsCatalogOpen((open) => !open)}
+                  aria-expanded={isCatalogOpen}
+                  aria-controls="catalog-dropdown"
+                  aria-haspopup="true"
+                  aria-label="Browse all categories"
+                  className={`${NAV_ITEM} gap-2 border-b-2 border-transparent font-semibold text-ink hover:text-forest`}
+                >
+                  {isCatalogOpen ? (
+                    <X size={16} aria-hidden="true" />
+                  ) : (
+                    <Menu size={16} aria-hidden="true" />
+                  )}
+                  All Categories
+                </button>
+              </li>
+              <li aria-hidden="true" className="h-4 w-px bg-hairline shrink-0" />
+              {categories.slice(0, VISIBLE_CATEGORY_LIMIT).map((category) => {
                 const href = `/categories/${category.slug}`;
                 const isActive = pathname === href;
                 return (
@@ -159,10 +183,10 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
                     <Link
                       href={href}
                       aria-current={isActive ? 'page' : undefined}
-                      className={`flex h-11 items-center border-b-2 text-caption font-medium transition-colors rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-forest ${
+                      className={`${NAV_ITEM} border-b-2 font-medium ${
                         isActive
                           ? 'border-sage text-ink'
-                          : 'border-transparent text-ink-body hover:text-forest hover:border-sage'
+                          : 'border-transparent text-ink-body hover:text-forest'
                       }`}
                     >
                       {category.name}

@@ -52,6 +52,9 @@ module.exports = {
           "0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08)",
         overlay:
           "0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.08)",
+        lift: "0 4px 10px -3px rgba(26, 26, 23, 0.12), 0 2px 4px -2px rgba(26, 26, 23, 0.08)",
+        "lift-lg":
+          "0 16px 32px -12px rgba(26, 26, 23, 0.18), 0 6px 14px -8px rgba(26, 26, 23, 0.10)",
       },
       fontFamily: {
         sans: [

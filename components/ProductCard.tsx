@@ -18,13 +18,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const productHref = `/products/${product.slug}`;
 
   return (
-    <article className="group relative flex flex-col rounded-md overflow-hidden bg-canvas border border-hairline hover:border-hairline-strong transition-all hover:shadow-raised">
+    <article className="group relative flex flex-col rounded-md overflow-hidden bg-canvas border border-hairline transition-[transform,box-shadow,border-color] duration-[250ms] ease-out hover:border-hairline-strong focus-within:border-hairline-strong hover:shadow-lift-lg focus-within:shadow-lift-lg motion-safe:hover:-translate-y-1.5 motion-safe:focus-within:-translate-y-1.5">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-canvas-soft">
         <SafeImage
           src={product.image.src}
           alt={product.image.alt}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-104"
+          className="object-cover transition-transform duration-[250ms] ease-out motion-safe:group-hover:scale-[1.04]"
           fallbackLabel={product.title}
         />
 
