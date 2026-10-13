@@ -20,6 +20,7 @@ export interface Product {
   craftTag?: string;
   image: string;
   imageAlt: string;
+  gallery: string[];
 }
 
 export interface Category {

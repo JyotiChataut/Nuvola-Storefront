@@ -1,6 +1,5 @@
 import { Product, Category, Announcement } from "@/types";
 
-// WARNING: Demonstration fixtures. Not connected to live inventory.
 export const ANNOUNCEMENT_DATA: Announcement = {
   id: "ann-1",
   text: "Direct from independent workshops · Carbon-neutral delivery on all artisan orders over $75",
@@ -41,9 +40,89 @@ export const CATEGORIES_DATA: Category[] = [
     image: "/images/categories/glassware.jpg",
     description: "Amber tint drinkware and sculptural decorative decanters",
   },
+  {
+    id: "cat-fashion",
+    name: "Fashion",
+    slug: "fashion",
+    itemCount: 15,
+    image: "/images/categories/fashion.jpg",
+    description: "Curated apparel from ethical studios",
+  },
+  {
+    id: "cat-jewellery",
+    name: "Jewellery",
+    slug: "jewellery",
+    itemCount: 22,
+    image: "/images/categories/jewellery.jpg",
+    description: "Handcrafted fine jewellery pieces",
+  },
+  {
+    id: "cat-perfumes",
+    name: "Perfumes",
+    slug: "perfumes",
+    itemCount: 12,
+    image: "/images/categories/perfumes.jpg",
+    description: "Artisan-blended fragrances",
+  },
+  {
+    id: "cat-wallets",
+    name: "Wallets",
+    slug: "wallets",
+    itemCount: 8,
+    image: "/images/categories/wallets.jpg",
+    description: "Minimalist leather wallets",
+  },
+  {
+    id: "cat-party-wear-shoes",
+    name: "Party Wear Shoes",
+    slug: "party-wear-shoes",
+    itemCount: 10,
+    image: "/images/categories/party-shoes.jpg",
+    description: "Elegant footwear for special occasions",
+  },
+  {
+    id: "cat-watches",
+    name: "Watches",
+    slug: "watches",
+    itemCount: 5,
+    image: "/images/categories/watches.jpg",
+    description: "Precision crafted timepieces",
+  },
+  {
+    id: "cat-iphones",
+    name: "iPhones",
+    slug: "iphones",
+    itemCount: 3,
+    image: "/images/categories/iphones.jpg",
+    description: "Refurbished premium iPhones",
+  },
+  {
+    id: "cat-purses",
+    name: "Purses",
+    slug: "purses",
+    itemCount: 14,
+    image: "/images/categories/purses.jpg",
+    description: "Artisan crafted purses",
+  },
+  {
+    id: "cat-handbags",
+    name: "Handbags",
+    slug: "handbags",
+    itemCount: 18,
+    image: "/images/categories/handbags.jpg",
+    description: "Statement handbags",
+  },
+  {
+    id: "cat-sneakers",
+    name: "Sneakers",
+    slug: "sneakers",
+    itemCount: 25,
+    image: "/images/categories/sneakers.jpg",
+    description: "Ethical artisan sneakers",
+  },
 ];
 
-export const TRENDING_PRODUCTS: Product[] = [
+export const ALL_PRODUCTS: Product[] = [
   {
     id: "prod-1",
     title: "Ash-Glazed Ribbed Stoneware Vase",
@@ -64,8 +143,14 @@ export const TRENDING_PRODUCTS: Product[] = [
     stockCount: 4,
     craftTag: "Wheel Thrown",
     image: "/images/products/stoneware-vase.jpg",
-    imageAlt:
-      "Textured ivory and beige ribbed ceramic stoneware vase on warm background",
+    imageAlt: "Ribbed stoneware vase",
+    gallery: [
+      "/images/products/stoneware-vase.jpg",
+      "/images/products/stoneware-vase-2.jpg",
+      "/images/products/stoneware-vase-3.jpg",
+      "/images/products/stoneware-vase-4.jpg",
+      "/images/products/stoneware-vase-5.jpg",
+    ],
   },
   {
     id: "prod-2",
@@ -87,63 +172,42 @@ export const TRENDING_PRODUCTS: Product[] = [
     isNew: true,
     craftTag: "Organic Flax",
     image: "/images/products/linen-throw.jpg",
-    imageAlt:
-      "Folded natural washed neutral linen blanket with subtle fringed border",
-  },
-  {
-    id: "prod-3",
-    title: "End-Grain Black Walnut Prep Board",
-    slug: "end-grain-black-walnut-prep-board",
-    seller: {
-      name: "Timber & Grain Guild",
-      location: "Oregon, US",
-      rating: 5.0,
-      tenure: "Member since 2021",
-      verified: true,
-    },
-    category: "Woodwork",
-    categorySlug: "woodwork",
-    price: 120,
-    rating: 5.0,
-    reviewCount: 92,
-    stockCount: 3,
-    craftTag: "FSC Certified",
-    image: "/images/products/walnut-board.jpg",
-    imageAlt: "Rich dark walnut chopping and serving board with chamfered edge",
-  },
-  {
-    id: "prod-4",
-    title: "Fluted Amber Glass Sipping Tumblers (Set of 2)",
-    slug: "fluted-amber-glass-tumblers",
-    seller: {
-      name: "Luce Glassworks",
-      location: "Murano, IT",
-      rating: 4.7,
-      tenure: "Member since 2023",
-      verified: true,
-    },
-    category: "Glassware",
-    categorySlug: "glassware",
-    price: 64,
-    originalPrice: 75,
-    rating: 4.7,
-    reviewCount: 26,
-    stockCount: 5,
-    craftTag: "Mouth Blown",
-    image: "/images/products/amber-tumblers.jpg",
-    imageAlt:
-      "Warm translucent amber tinted fluted glass cup on reflective surface",
+    imageAlt: "Linen blanket",
+    gallery: [
+      "/images/products/linen-throw.jpg",
+      "/images/products/linen-throw-2.jpg",
+      "/images/products/linen-throw-3.jpg",
+      "/images/products/linen-throw-4.jpg",
+      "/images/products/linen-throw-5.jpg",
+    ],
   },
 ];
 
 export async function getAnnouncement(): Promise<Announcement> {
   return ANNOUNCEMENT_DATA;
 }
-
 export async function getCategories(): Promise<Category[]> {
   return CATEGORIES_DATA;
 }
-
 export async function getTrendingProducts(): Promise<Product[]> {
-  return TRENDING_PRODUCTS;
+  return ALL_PRODUCTS.filter((p) => p.isNew || p.rating > 4.5);
+}
+export async function getAllProducts(): Promise<Product[]> {
+  return ALL_PRODUCTS;
+}
+export async function getProductById(id: string): Promise<Product | undefined> {
+  return ALL_PRODUCTS.find((p) => p.id === id);
+}
+export async function getProductsByCategory(
+  categorySlug: string,
+): Promise<Product[]> {
+  return ALL_PRODUCTS.filter((p) => p.categorySlug === categorySlug);
+}
+export async function getCategoryBySlug(
+  slug: string,
+): Promise<Category | undefined> {
+  return CATEGORIES_DATA.find((c) => c.slug === slug);
+}
+export async function getFeaturedProducts(): Promise<Product[]> {
+  return ALL_PRODUCTS.slice(0, 4);
 }
