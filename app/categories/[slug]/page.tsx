@@ -5,7 +5,7 @@ import {
   getCategoryBySlug,
   searchProducts,
 } from '@/lib/data';
-import type { ProductSort } from '@/types';
+import { firstValue, toPage, toPrice, toSort } from '@/lib/search-params';
 import { StorefrontShell } from '@/components/StorefrontShell';
 import { CategoryHeader } from '@/components/CategoryHeader';
 import { CategoryControls } from '@/components/CategoryControls';
@@ -13,33 +13,10 @@ import { ProductGrid } from '@/components/ProductGrid';
 import { Pagination } from '@/components/Pagination';
 
 const PAGE_SIZE = 12;
-const SORTS: ProductSort[] = ['relevance', 'price-asc', 'price-desc', 'rating'];
 
 interface CategoryPageProps {
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-function firstValue(value: string | string[] | undefined): string {
-  if (Array.isArray(value)) return value[0] ?? '';
-  return value ?? '';
-}
-
-function toPrice(value: string): number | undefined {
-  if (value.trim() === '') return undefined;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
-}
-
-function toSort(value: string): ProductSort {
-  return SORTS.includes(value as ProductSort)
-    ? (value as ProductSort)
-    : 'relevance';
-}
-
-function toPage(value: string): number {
-  const parsed = Number.parseInt(value, 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
 }
 
 export async function generateStaticParams() {

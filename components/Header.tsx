@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ShoppingBag, Heart, User, Menu, X, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Heart, User, Menu, X, ArrowRight } from 'lucide-react';
 import { useStorefront } from '@/context/storefront-context';
 import { Category } from '@/types';
+import { HeaderSearch } from './HeaderSearch';
 
 interface HeaderProps {
   categories: Category[];
@@ -19,7 +20,6 @@ const NAV_ITEM =
 export const Header: React.FC<HeaderProps> = ({ categories }) => {
   const { cartCount, wishlist, setIsCartOpen } = useStorefront();
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const headerRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
@@ -85,20 +85,11 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
         </div>
 
         <div className="hidden md:flex flex-1 min-w-0 justify-center">
-          <div className="relative w-full max-w-md">
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search jewellery, watches, handbags..."
-              className="w-full h-10.5 pl-10 pr-4 bg-canvas-soft border border-hairline rounded-full text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest transition-all"
-            />
-            <Search
-              size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none"
-              aria-hidden="true"
-            />
-          </div>
+          <HeaderSearch
+            className="max-w-md"
+            placeholder="Search jewellery, watches, handbags..."
+            inputClassName="w-full h-10 pl-10 pr-4 bg-canvas-soft border border-hairline rounded-full text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:border-forest focus:ring-1 focus:ring-forest transition-all"
+          />
         </div>
 
         <div className="flex items-center gap-0.5 sm:gap-1 shrink-0 ml-auto md:ml-0">
@@ -206,18 +197,11 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="md:hidden mb-5">
-              <div className="relative w-full">
-                <input
-                  type="search"
-                  placeholder="Search the catalog..."
-                  className="w-full h-10 pl-9 pr-4 bg-canvas-soft border border-hairline rounded-full text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:border-forest"
-                />
-                <Search
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"
-                  aria-hidden="true"
-                />
-              </div>
+              <HeaderSearch
+                inputClassName="w-full h-10 pl-9 pr-4 bg-canvas-soft border border-hairline rounded-full text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:border-forest"
+                iconSize={16}
+                onNavigate={() => setIsCatalogOpen(false)}
+              />
             </div>
 
             <div className="flex items-baseline justify-between gap-4 mb-4">
