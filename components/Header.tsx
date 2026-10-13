@@ -14,7 +14,7 @@ interface HeaderProps {
 const VISIBLE_CATEGORY_LIMIT = 10;
 
 const NAV_ITEM =
-  'flex h-11 items-center rounded-sm px-2 -mx-2 text-caption transition-[transform,color,background-color,box-shadow] duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-forest hover:bg-canvas-soft focus-visible:bg-canvas-soft hover:shadow-lift focus-visible:shadow-lift motion-safe:hover:-translate-y-0.5 motion-safe:focus-visible:-translate-y-0.5';
+  'flex h-11 items-center rounded-sm px-1.5 -mx-1.5 text-[11px] xl:text-caption transition-[transform,color,background-color,box-shadow] duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-forest hover:bg-canvas-soft focus-visible:bg-canvas-soft hover:shadow-lift focus-visible:shadow-lift motion-safe:hover:-translate-y-0.5 motion-safe:focus-visible:-translate-y-0.5';
 
 export const Header: React.FC<HeaderProps> = ({ categories }) => {
   const { cartCount, wishlist, setIsCartOpen } = useStorefront();
@@ -155,7 +155,7 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="no-scrollbar overflow-x-auto">
-            <ul className="flex w-max min-w-full items-center gap-x-4 xl:gap-x-5 h-11 whitespace-nowrap">
+            <ul className="flex w-max min-w-full items-center gap-x-2.5 xl:gap-x-5 h-11 whitespace-nowrap">
               <li className="shrink-0">
                 <button
                   type="button"
