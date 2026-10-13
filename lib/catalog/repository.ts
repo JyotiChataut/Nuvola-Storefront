@@ -4,6 +4,9 @@ import type {
   Category,
   ImageAsset,
   Product,
+  ProductPage,
+  ProductQuery,
+  ProductSort,
 } from "@/types";
 
 export interface DemoProduct {
@@ -121,6 +124,43 @@ function toCategory(raw: DemoCategory): Category {
   };
 }
 
+const DEFAULT_SORT: ProductSort = "relevance";
+
+function scoreProduct(product: Product, term: string): number {
+  const title = product.title.toLowerCase();
+  const category = product.categoryName.toLowerCase();
+  const seller = product.seller.name.toLowerCase();
+  const description = product.description.toLowerCase();
+  const craft = (product.craftTag ?? "").toLowerCase();
+
+  let score = 0;
+  if (title.startsWith(term)) score += 6;
+  if (title.includes(term)) score += 4;
+  if (category.includes(term)) score += 3;
+  if (seller.includes(term)) score += 2;
+  if (craft.includes(term)) score += 1;
+  if (description.includes(term)) score += 1;
+  return score;
+}
+
+function compareBySort(
+  a: Product,
+  b: Product,
+  sort: ProductSort,
+  term: string,
+): number {
+  switch (sort) {
+    case "price-asc":
+      return a.price - b.price;
+    case "price-desc":
+      return b.price - a.price;
+    case "rating":
+      return b.rating - a.rating || b.reviewCount - a.reviewCount;
+    default:
+      return term ? scoreProduct(b, term) - scoreProduct(a, term) : 0;
+  }
+}
+
 export class LocalDemoCatalogRepository implements CatalogRepository {
   private readonly announcement: Announcement;
   private readonly categories: Category[];
@@ -177,5 +217,41 @@ export class LocalDemoCatalogRepository implements CatalogRepository {
     return this.products.filter(
       (product) => product.isNew || product.rating >= 4.5,
     );
+  }
+
+  async searchProducts(query: ProductQuery = {}): Promise<ProductPage> {
+    const term = (query.q ?? "").trim().toLowerCase();
+    const sort = query.sort ?? DEFAULT_SORT;
+    const minPrice =
+      typeof query.minPrice === "number" ? query.minPrice : undefined;
+    const maxPrice =
+      typeof query.maxPrice === "number" ? query.maxPrice : undefined;
+
+    const matched = this.products.filter((product) => {
+      if (query.categorySlug && product.categorySlug !== query.categorySlug) {
+        return false;
+      }
+      if (minPrice !== undefined && product.price < minPrice) return false;
+      if (maxPrice !== undefined && product.price > maxPrice) return false;
+      if (term && scoreProduct(product, term) === 0) return false;
+      return true;
+    });
+
+    const ordered =
+      term || sort !== "relevance"
+        ? [...matched].sort((a, b) => compareBySort(a, b, sort, term))
+        : matched;
+
+    const total = ordered.length;
+    const pageSize =
+      query.pageSize && query.pageSize > 0 ? Math.floor(query.pageSize) : total;
+    const totalPages =
+      pageSize > 0 ? Math.max(1, Math.ceil(total / pageSize)) : 1;
+    const requestedPage = Math.floor(query.page ?? 1);
+    const page = Math.min(Math.max(1, requestedPage || 1), totalPages);
+    const start = (page - 1) * pageSize;
+    const items = ordered.slice(start, start + pageSize);
+
+    return { items: [...items], total, page, pageSize, totalPages };
   }
 }

@@ -3,6 +3,8 @@ import type {
   CatalogRepository,
   Category,
   Product,
+  ProductPage,
+  ProductQuery,
 } from "@/types";
 import {
   LocalDemoCatalogRepository,
@@ -1113,4 +1115,9 @@ export async function getCategoryBySlug(
 }
 export async function getFeaturedProducts(limit?: number): Promise<Product[]> {
   return catalogRepository.getFeaturedProducts(limit);
+}
+export async function searchProducts(
+  query?: ProductQuery,
+): Promise<ProductPage> {
+  return catalogRepository.searchProducts(query);
 }

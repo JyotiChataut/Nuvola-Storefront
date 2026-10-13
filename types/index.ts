@@ -58,6 +58,26 @@ export interface CartItem {
   quantity: number;
 }
 
+export type ProductSort = "relevance" | "price-asc" | "price-desc" | "rating";
+
+export interface ProductQuery {
+  q?: string;
+  categorySlug?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: ProductSort;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ProductPage {
+  items: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface CatalogRepository {
   getAnnouncement(): Promise<Announcement>;
   getCategories(): Promise<Category[]>;
@@ -68,4 +88,5 @@ export interface CatalogRepository {
   getProductsByCategory(categorySlug: string): Promise<Product[]>;
   getFeaturedProducts(limit?: number): Promise<Product[]>;
   getTrendingProducts(): Promise<Product[]>;
+  searchProducts(query?: ProductQuery): Promise<ProductPage>;
 }
