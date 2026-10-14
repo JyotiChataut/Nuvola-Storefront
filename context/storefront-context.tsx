@@ -14,6 +14,7 @@ interface StorefrontContextType {
   toggleWishlist: (productId: string) => void;
   cartCount: number;
   cartSubtotal: number;
+  isHydrated: boolean;
 }
 
 const StorefrontContext = createContext<StorefrontContextType | undefined>(undefined);
@@ -22,6 +23,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('nuvola_cart');
@@ -32,6 +34,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     if (savedWish) {
       try { setWishlist(JSON.parse(savedWish)); } catch (_) {}
     }
+    setIsHydrated(true);
   }, []);
 
   const addToCart = (product: Product, quantity = 1) => {
@@ -104,6 +107,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
         toggleWishlist,
         cartCount,
         cartSubtotal,
+        isHydrated,
       }}
     >
       {children}

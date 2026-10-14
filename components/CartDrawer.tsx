@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { X, Trash2, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useStorefront } from '@/context/storefront-context';
 import { formatPrice } from '@/lib/format';
@@ -154,14 +155,14 @@ export const CartDrawer: React.FC = () => {
               <p className="text-[11px] text-ink-muted leading-relaxed">
                 Taxes and calculated workshop shipping finalized in checkout. Direct artisan support guaranteed.
               </p>
-              <button
-                type="button"
-                onClick={() => alert('Checkout flow will be implemented in subsequent phase (demonstration).')}
+              <Link
+                href="/cart"
+                onClick={() => setIsCartOpen(false)}
                 className="w-full py-3.5 bg-forest hover:bg-forest-hover text-white text-sm font-semibold rounded-sm shadow-sm flex items-center justify-center gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest"
               >
-                <span>Proceed to Checkout</span>
-                <ArrowRight size={16} />
-              </button>
+                <span>View Cart</span>
+                <ArrowRight size={16} aria-hidden="true" />
+              </Link>
             </div>
           )}
         </div>
