@@ -104,13 +104,10 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
             <User size={20} aria-hidden="true" />
           </button>
 
-          <button
-            type="button"
+          <Link
+            href="/wishlist"
             className="relative p-2.5 text-ink hover:text-forest rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-forest transition-colors"
-            aria-label={`Wishlist items (${wishlist.length})`}
-            onClick={() =>
-              alert(`Saved items: ${wishlist.length} item(s) in wishlist`)
-            }
+            aria-label={`Wishlist, ${wishlist.length} saved item${wishlist.length === 1 ? '' : 's'}`}
           >
             <Heart
               size={20}
@@ -122,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({ categories }) => {
                 {wishlist.length}
               </span>
             )}
-          </button>
+          </Link>
 
           <button
             type="button"
