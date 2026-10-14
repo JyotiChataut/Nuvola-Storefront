@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useStorefront } from '@/context/storefront-context';
 import { formatPrice } from '@/lib/format';
+import { OrderSummary } from './OrderSummary';
 import type { CartItem } from '@/types';
 
 function CartLine({ item }: { item: CartItem }) {
@@ -164,50 +165,20 @@ export function CartView() {
         </ul>
       </div>
 
-      <aside
-        aria-label="Order summary"
-        className="lg:sticky lg:top-24 border border-hairline rounded-md bg-canvas-soft p-5 sm:p-6"
+      <OrderSummary
+        itemCount={cartCount}
+        subtotal={cartSubtotal}
+        shippingNote="Calculated at checkout"
       >
-        <h2 className="text-title-md font-semibold text-ink">Order summary</h2>
-
-        <dl className="mt-4 space-y-2.5 text-body-sm">
-          <div className="flex items-center justify-between">
-            <dt className="text-ink-muted">Items</dt>
-            <dd className="text-ink tabular-nums">{cartCount}</dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-ink-muted">Subtotal</dt>
-            <dd className="text-ink font-semibold tabular-nums">
-              {formatPrice(cartSubtotal)}
-            </dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-ink-muted">Shipping</dt>
-            <dd className="text-ink-muted">Calculated at checkout</dd>
-          </div>
-        </dl>
-
-        <div className="mt-4 border-t border-hairline pt-4 flex items-center justify-between">
-          <span className="text-body-md font-semibold text-ink">
-            Estimated total
-          </span>
-          <span className="text-title-md font-bold text-ink tabular-nums">
-            {formatPrice(cartSubtotal)}
-          </span>
-        </div>
-
-        <button
-          type="button"
-          disabled
-          aria-disabled="true"
-          className="mt-5 w-full py-3.5 bg-forest-disabled text-white text-sm font-semibold rounded-sm cursor-not-allowed flex items-center justify-center gap-2"
+        <Link
+          href="/checkout"
+          className="mt-5 w-full py-3.5 bg-forest hover:bg-forest-hover text-white text-sm font-semibold rounded-sm flex items-center justify-center gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest"
         >
           <span>Proceed to checkout</span>
           <ArrowRight size={16} aria-hidden="true" />
-        </button>
+        </Link>
         <p className="mt-2 text-caption text-ink-muted text-center leading-relaxed">
-          Checkout opens in the next release. This demonstration cart does not
-          process payment.
+          Continue to a demonstration checkout. No payment is processed.
         </p>
 
         <Link
@@ -219,10 +190,9 @@ export function CartView() {
 
         <p className="mt-5 pt-4 border-t border-hairline flex items-start gap-2 text-caption text-ink-muted leading-relaxed">
           <Truck size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
-          Carbon-neutral delivery on artisan orders over $75. Taxes finalized at
-          checkout.
+          Carbon-neutral delivery on artisan orders over $75.
         </p>
-      </aside>
+      </OrderSummary>
     </div>
   );
 }

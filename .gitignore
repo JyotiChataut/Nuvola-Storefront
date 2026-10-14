@@ -12,4 +12,4 @@ dist/
 coverage/
 *.tsbuildinfo
 .gstack/
-./Nuvola-CMS/
+Nuvola-CMS/
