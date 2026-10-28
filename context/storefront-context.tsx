@@ -11,6 +11,7 @@ interface StorefrontContextType {
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  clearCart: () => void;
   toggleWishlist: (productId: string) => void;
   cartCount: number;
   cartSubtotal: number;
@@ -78,6 +79,11 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
     });
   };
 
+  const clearCart = () => {
+    setCart([]);
+    localStorage.setItem('nuvola_cart', JSON.stringify([]));
+  };
+
   const toggleWishlist = (productId: string) => {
     setWishlist((prev) => {
       const updated = prev.includes(productId)
@@ -104,6 +110,7 @@ export function StorefrontProvider({ children }: { children: React.ReactNode }) 
         addToCart,
         removeFromCart,
         updateQuantity,
+        clearCart,
         toggleWishlist,
         cartCount,
         cartSubtotal,

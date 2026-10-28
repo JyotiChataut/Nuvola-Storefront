@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Info, Lock, ChevronLeft, ShoppingBag } from 'lucide-react';
+import { Info, Lock, ChevronLeft, ShoppingBag, Check, AlertCircle } from 'lucide-react';
 import { useStorefront } from '@/context/storefront-context';
 import { OrderSummary } from './OrderSummary';
 import { formatPrice } from '@/lib/format';
@@ -56,11 +56,120 @@ function CheckoutSkeleton() {
   );
 }
 
+const inputClasses =
+  'w-full h-11 px-3.5 bg-canvas border border-hairline rounded-sm text-body-sm text-ink placeholder:text-ink-soft transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest';
+
+interface FormState {
+  name: string;
+  email: string;
+  city: string;
+  region: string;
+}
+
 export function CheckoutView() {
-  const { cart, cartCount, cartSubtotal, isHydrated } = useStorefront();
+  const { cart, cartCount, cartSubtotal, isHydrated, clearCart } =
+    useStorefront();
+
+  const [form, setForm] = useState<FormState>({
+    name: '',
+    email: '',
+    city: '',
+    region: '',
+  });
+  const [status, setStatus] = useState<
+    'idle' | 'submitting' | 'success' | 'error'
+  >('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
 
   if (!isHydrated) {
     return <CheckoutSkeleton />;
+  }
+
+  const updateField =
+    (key: keyof FormState) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setForm((previous) => ({ ...previous, [key]: value }));
+      if (status === 'error') setStatus('idle');
+    };
+
+  const placeOrder = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setStatus('submitting');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          customer: form,
+          items: cart.map((item) => ({
+            title: item.product.title,
+            sku: item.product.slug,
+            quantity: item.quantity,
+            unitPriceCents: Math.round(item.product.price * 100),
+          })),
+        }),
+      });
+
+      const data = (await response.json().catch(() => null)) as
+        | { error?: string; orderNumber?: string | null }
+        | null;
+
+      if (!response.ok) {
+        setStatus('error');
+        setErrorMessage(
+          data?.error ?? 'We could not place your order. Please try again.',
+        );
+        return;
+      }
+
+      setOrderNumber(data?.orderNumber ?? null);
+      setStatus('success');
+      clearCart();
+    } catch {
+      setStatus('error');
+      setErrorMessage('We could not reach the store. Please try again.');
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="max-w-xl">
+        <div
+          role="status"
+          className="flex flex-col items-start gap-3 rounded-md border border-sage bg-canvas-soft p-6"
+        >
+          <span className="flex items-center justify-center w-11 h-11 rounded-full bg-sage-light/60 border border-sage text-forest">
+            <Check size={22} aria-hidden="true" />
+          </span>
+          <h2 className="text-title-md font-semibold text-ink">
+            Order placed
+          </h2>
+          <p className="text-body-sm text-ink-body leading-relaxed">
+            Thank you{form.name ? `, ${form.name.split(' ')[0]}` : ''}. Your
+            demo order has been recorded
+            {orderNumber ? (
+              <>
+                {' '}
+                as <span className="font-semibold text-ink">{orderNumber}</span>
+              </>
+            ) : null}
+            . No payment was processed.
+          </p>
+          <p className="text-caption text-ink-muted leading-relaxed">
+            You can find it in the merchant admin under Orders.
+          </p>
+          <Link
+            href="/"
+            className="mt-2 inline-flex items-center justify-center px-5 py-2.5 bg-forest hover:bg-forest-hover text-white text-sm font-semibold rounded-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest"
+          >
+            Continue shopping
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   if (cart.length === 0) {
@@ -86,7 +195,10 @@ export function CheckoutView() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-8 lg:gap-10 items-start">
+    <form
+      onSubmit={placeOrder}
+      className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-8 lg:gap-10 items-start"
+    >
       <div className="space-y-6">
         <p
           role="note"
@@ -97,7 +209,8 @@ export function CheckoutView() {
             <span className="font-semibold text-ink">
               Demonstration checkout.
             </span>{' '}
-            No order is placed and no payment is processed.
+            An order is recorded for the demo store, but no payment is
+            processed.
           </span>
         </p>
 
@@ -127,20 +240,72 @@ export function CheckoutView() {
         </section>
 
         <section
-          aria-labelledby="checkout-delivery-heading"
+          aria-labelledby="checkout-details-heading"
           className="rounded-md border border-hairline p-5"
         >
           <h2
-            id="checkout-delivery-heading"
+            id="checkout-details-heading"
             className="text-title-md font-semibold text-ink"
           >
-            Delivery
+            Your details
           </h2>
           <p className="mt-2 text-body-sm text-ink-muted leading-relaxed">
-            Delivery address and per-workshop shipping rates are not collected in
-            this demonstration. The live checkout will collect and price them
-            here.
+            Collected only to record this demo order.
           </p>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="flex flex-col gap-1.5">
+              <span className="text-caption font-semibold text-ink">Name</span>
+              <input
+                type="text"
+                name="name"
+                required
+                autoComplete="name"
+                value={form.name}
+                onChange={updateField('name')}
+                placeholder="Ada Lovelace"
+                className={inputClasses}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-caption font-semibold text-ink">Email</span>
+              <input
+                type="email"
+                name="email"
+                required
+                autoComplete="email"
+                value={form.email}
+                onChange={updateField('email')}
+                placeholder="ada@example.com"
+                className={inputClasses}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-caption font-semibold text-ink">City</span>
+              <input
+                type="text"
+                name="city"
+                required
+                autoComplete="address-level2"
+                value={form.city}
+                onChange={updateField('city')}
+                placeholder="London"
+                className={inputClasses}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="text-caption font-semibold text-ink">Region</span>
+              <input
+                type="text"
+                name="region"
+                required
+                autoComplete="address-level1"
+                value={form.region}
+                onChange={updateField('region')}
+                placeholder="Greater London"
+                className={inputClasses}
+              />
+            </label>
+          </div>
         </section>
 
         <section
@@ -154,8 +319,8 @@ export function CheckoutView() {
             Payment
           </h2>
           <p className="mt-2 text-body-sm text-ink-muted leading-relaxed">
-            Payment is not connected. No card details are collected, stored, or
-            charged.
+            No payment is connected. No card details are collected, stored, or
+            charged. The order is recorded as pending.
           </p>
           <p className="mt-3 flex items-center gap-2 text-caption text-ink-muted">
             <Lock size={14} aria-hidden="true" />
@@ -171,15 +336,25 @@ export function CheckoutView() {
         shippingNote="Not collected in this demo"
       >
         <button
-          type="button"
-          disabled
-          aria-disabled="true"
-          className="mt-5 w-full py-3.5 bg-forest-disabled text-white text-sm font-semibold rounded-sm cursor-not-allowed flex items-center justify-center gap-2"
+          type="submit"
+          disabled={status === 'submitting'}
+          className="mt-5 w-full py-3.5 bg-forest hover:bg-forest-hover disabled:bg-forest-disabled text-white text-sm font-semibold rounded-sm transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-forest"
         >
-          <span>Place order</span>
+          <span>{status === 'submitting' ? 'Placing order…' : 'Place order'}</span>
         </button>
+
+        {status === 'error' && (
+          <p
+            role="alert"
+            className="mt-3 flex items-center gap-1.5 text-caption text-vermilion font-medium"
+          >
+            <AlertCircle size={14} className="shrink-0" aria-hidden="true" />
+            <span>{errorMessage}</span>
+          </p>
+        )}
+
         <p className="mt-2 text-caption text-ink-muted text-center leading-relaxed">
-          Order placement is disabled in this demonstration.
+          No payment is taken. A pending demo order is recorded.
         </p>
 
         <Link
@@ -190,6 +365,6 @@ export function CheckoutView() {
           Back to cart
         </Link>
       </OrderSummary>
-    </div>
+    </form>
   );
 }
