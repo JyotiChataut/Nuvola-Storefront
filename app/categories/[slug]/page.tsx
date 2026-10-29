@@ -1,10 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import {
-  getCategories,
-  getCategoryBySlug,
-  searchProducts,
-} from '@/lib/data';
+import { getCategoryBySlug, searchProducts } from '@/lib/data';
 import { firstValue, toPage, toPrice, toSort } from '@/lib/search-params';
 import { StorefrontShell } from '@/components/StorefrontShell';
 import { CategoryHeader } from '@/components/CategoryHeader';
@@ -17,11 +13,6 @@ const PAGE_SIZE = 12;
 interface CategoryPageProps {
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export async function generateStaticParams() {
-  const categories = await getCategories();
-  return categories.map((category) => ({ slug: category.slug }));
 }
 
 export async function generateMetadata({

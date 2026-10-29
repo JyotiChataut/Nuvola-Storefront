@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 
 interface CheckoutLine {
-  title: string;
-  sku: string;
+  variantId: string;
   quantity: number;
-  unitPriceCents: number;
 }
 
 interface CheckoutRequest {
@@ -62,25 +60,12 @@ export async function POST(request: Request): Promise<NextResponse> {
   for (const raw of rawItems) {
     if (typeof raw !== "object" || raw === null) continue;
     const record = raw as Record<string, unknown>;
-    const title = toText(record.title);
-    const sku = toText(record.sku);
+    const variantId = toText(record.variantId);
     const quantity = Number(record.quantity);
-    const unitPriceCents = Number(record.unitPriceCents);
-    if (
-      title === "" ||
-      !Number.isInteger(quantity) ||
-      quantity < 1 ||
-      !Number.isFinite(unitPriceCents) ||
-      unitPriceCents < 0
-    ) {
+    if (variantId === "" || !Number.isInteger(quantity) || quantity < 1) {
       continue;
     }
-    items.push({
-      title,
-      sku,
-      quantity,
-      unitPriceCents: Math.round(unitPriceCents),
-    });
+    items.push({ variantId, quantity });
   }
   if (items.length === 0) return fail("Your cart is empty.", 400);
 

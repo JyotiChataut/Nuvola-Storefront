@@ -99,17 +99,25 @@ export function CheckoutView() {
     setErrorMessage('');
 
     try {
+      const items = cart.map((item) => ({
+        variantId: item.product.variantId ?? '',
+        quantity: item.quantity,
+      }));
+
+      if (items.some((item) => item.variantId === '')) {
+        setStatus('error');
+        setErrorMessage(
+          'Some items are not linked to the store catalog. Remove them and add them again.',
+        );
+        return;
+      }
+
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           customer: form,
-          items: cart.map((item) => ({
-            title: item.product.title,
-            sku: item.product.slug,
-            quantity: item.quantity,
-            unitPriceCents: Math.round(item.product.price * 100),
-          })),
+          items,
         }),
       });
 

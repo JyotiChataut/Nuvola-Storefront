@@ -55,17 +55,19 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-body-sm text-ink-body">
-        <span className="inline-flex items-center gap-1 text-ink">
-          <Star size={15} className="fill-ink text-ink" aria-hidden="true" />
-          <span className="font-semibold tabular-nums">{product.rating}</span>
-        </span>
-        <span className="text-ink-muted">
-          {product.reviewCount > 0
-            ? `${product.reviewCount} verified reviews`
-            : 'No reviews yet (demo)'}
-        </span>
-      </div>
+      {product.reviewCount > 0 ? (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-body-sm text-ink-body">
+          <span className="inline-flex items-center gap-1 text-ink">
+            <Star size={15} className="fill-ink text-ink" aria-hidden="true" />
+            <span className="font-semibold tabular-nums">{product.rating}</span>
+          </span>
+          <span className="text-ink-muted">
+            {product.reviewCount} verified reviews
+          </span>
+        </div>
+      ) : (
+        <p className="text-body-sm text-ink-muted">No reviews yet.</p>
+      )}
 
       <div className="border-t border-hairline-soft pt-5">
         <div className="flex items-baseline gap-3">

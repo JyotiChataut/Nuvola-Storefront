@@ -124,9 +124,9 @@ function toCategory(raw: DemoCategory): Category {
   };
 }
 
-const DEFAULT_SORT: ProductSort = "relevance";
+export const DEFAULT_SORT: ProductSort = "relevance";
 
-function scoreProduct(product: Product, term: string): number {
+export function scoreProduct(product: Product, term: string): number {
   const title = product.title.toLowerCase();
   const category = product.categoryName.toLowerCase();
   const seller = product.seller.name.toLowerCase();
@@ -143,7 +143,7 @@ function scoreProduct(product: Product, term: string): number {
   return score;
 }
 
-function compareBySort(
+export function compareBySort(
   a: Product,
   b: Product,
   sort: ProductSort,

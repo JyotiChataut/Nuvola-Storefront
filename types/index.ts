@@ -33,6 +33,9 @@ export interface Product {
   isNew?: boolean;
   craftTag?: string;
 
+  /** Catalog variant the storefront adds to the cart. API-backed only. */
+  variantId?: string;
+
   image: ImageAsset;
   gallery: ImageAsset[];
 }

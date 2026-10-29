@@ -36,8 +36,14 @@ export function MerchantTrustCard({ product }: MerchantTrustCardProps) {
         <div>
           <dt className="text-ink-muted">Seller rating</dt>
           <dd className="mt-0.5 inline-flex items-center gap-1 font-semibold text-ink tabular-nums">
-            <Star size={12} className="fill-ink text-ink" aria-hidden="true" />
-            {seller.rating} / 5
+            {seller.rating > 0 ? (
+              <>
+                <Star size={12} className="fill-ink text-ink" aria-hidden="true" />
+                {seller.rating} / 5
+              </>
+            ) : (
+              <span className="font-medium text-ink-muted">No ratings yet</span>
+            )}
           </dd>
         </div>
         <div>

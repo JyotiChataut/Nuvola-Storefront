@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getAllProducts, getProductBySlug } from '@/lib/data';
+import { getProductBySlug } from '@/lib/data';
 import { StorefrontShell } from '@/components/StorefrontShell';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ProductGallery } from '@/components/ProductGallery';
@@ -11,11 +11,6 @@ import { StickyBuyBar } from '@/components/StickyBuyBar';
 
 interface ProductPageProps {
   params: { slug: string };
-}
-
-export async function generateStaticParams() {
-  const products = await getAllProducts();
-  return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({

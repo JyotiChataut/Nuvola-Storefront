@@ -106,13 +106,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </h3>
         </div>
 
-        <div className="flex items-center gap-1.5 text-caption text-ink-muted">
-          <div className="flex items-center text-ink" aria-hidden="true">
-            <Star size={13} className="fill-ink text-ink" />
+        {product.reviewCount > 0 && (
+          <div className="flex items-center gap-1.5 text-caption text-ink-muted">
+            <div className="flex items-center text-ink" aria-hidden="true">
+              <Star size={13} className="fill-ink text-ink" />
+            </div>
+            <span className="font-semibold text-ink tabular-nums">{product.rating}</span>
+            <span className="tabular-nums">({product.reviewCount} verified)</span>
           </div>
-          <span className="font-semibold text-ink tabular-nums">{product.rating}</span>
-          <span className="tabular-nums">({product.reviewCount} verified)</span>
-        </div>
+        )}
 
         <div className="pt-2 border-t border-hairline-soft flex items-end justify-between gap-2">
           <div>

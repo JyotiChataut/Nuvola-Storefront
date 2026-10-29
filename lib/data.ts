@@ -11,6 +11,7 @@ import {
   type DemoCategory,
   type DemoProduct,
 } from "@/lib/catalog/repository";
+import { ApiCatalogRepository } from "@/lib/catalog/api-repository";
 
 export const ANNOUNCEMENT_DATA: Announcement = {
   id: "ann-1",
@@ -1076,12 +1077,22 @@ export const ALL_PRODUCTS: DemoProduct[] = [
   },
 ];
 
-export const catalogRepository: CatalogRepository =
-  new LocalDemoCatalogRepository({
-    announcement: ANNOUNCEMENT_DATA,
-    categories: CATEGORIES_DATA,
-    products: ALL_PRODUCTS,
-  });
+const API_URL = process.env.NUVOLA_API_URL?.trim();
+const STORE_SLUG = process.env.NUVOLA_STORE_SLUG?.trim() || "nuvola-market";
+
+// API-backed when configured; local demo fixtures otherwise so the UI can be
+// previewed without the backend. Checkout still needs the API either way.
+export const catalogRepository: CatalogRepository = API_URL
+  ? new ApiCatalogRepository({
+      baseUrl: API_URL,
+      storeSlug: STORE_SLUG,
+      announcement: ANNOUNCEMENT_DATA,
+    })
+  : new LocalDemoCatalogRepository({
+      announcement: ANNOUNCEMENT_DATA,
+      categories: CATEGORIES_DATA,
+      products: ALL_PRODUCTS,
+    });
 
 export async function getAnnouncement(): Promise<Announcement> {
   return catalogRepository.getAnnouncement();

@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   description: 'Authentic craft and intentional goods sourced directly from independent workshops.',
 };
 
+// Catalog, stock, and prices come from the API at request time.
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({
   children,
 }: {
