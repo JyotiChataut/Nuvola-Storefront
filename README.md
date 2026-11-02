@@ -9,7 +9,7 @@ A modern e-commerce storefront built with Next.js App Router and Tailwind CSS. D
 - **Product Discovery & Browsing**: Category rails, collection filtering, sorting (price, new arrivals, rating), and paginated search.
 - **Product Details**: Multi-angle image gallery with fallback handling, specs overview, seller trust metrics, and responsive sticky purchase bar.
 - **Cart & Wishlist State**: Client-side persisted cart drawer/page and wishlist using React Context and `localStorage`.
-- **Checkout Flow**: Multi-step checkout UI with server-side validation and API forwarding.
+- **Checkout Flow**: Multi-step checkout UI with server-side validation, API forwarding, and idempotency keys so retries do not create duplicate orders.
 - **Hybrid Data Layer**: Operates out-of-the-box using bundled demo fixtures or dynamically fetches catalog and places orders via the Nuvola public API when configured.
 
 ---

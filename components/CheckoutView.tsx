@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Info, Lock, ChevronLeft, ShoppingBag, Check, AlertCircle } from 'lucide-react';
@@ -59,6 +59,13 @@ function CheckoutSkeleton() {
 const inputClasses =
   'w-full h-11 px-3.5 bg-canvas border border-hairline rounded-sm text-body-sm text-ink placeholder:text-ink-soft transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest';
 
+function createCheckoutKey(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+}
+
 interface FormState {
   name: string;
   email: string;
@@ -81,6 +88,9 @@ export function CheckoutView() {
   >('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const idempotency = useRef<{ key: string; fingerprint: string } | null>(
+    null,
+  );
 
   if (!isHydrated) {
     return <CheckoutSkeleton />;
@@ -95,6 +105,7 @@ export function CheckoutView() {
 
   const placeOrder = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (status === 'submitting') return;
     setStatus('submitting');
     setErrorMessage('');
 
@@ -112,13 +123,22 @@ export function CheckoutView() {
         return;
       }
 
+      const payload = { customer: form, items };
+      const fingerprint = JSON.stringify(payload);
+      const current = idempotency.current;
+      const attempt =
+        current?.fingerprint === fingerprint
+          ? current
+          : { key: createCheckoutKey(), fingerprint };
+      idempotency.current = attempt;
+
       const response = await fetch('/api/checkout', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          customer: form,
-          items,
-        }),
+        headers: {
+          'content-type': 'application/json',
+          'idempotency-key': attempt.key,
+        },
+        body: JSON.stringify(payload),
       });
 
       const data = (await response.json().catch(() => null)) as
@@ -133,6 +153,7 @@ export function CheckoutView() {
         return;
       }
 
+      idempotency.current = null;
       setOrderNumber(data?.orderNumber ?? null);
       setStatus('success');
       clearCart();

@@ -36,6 +36,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     return fail("Checkout is not connected to the store API.", 503);
   }
   const storeSlug = process.env.NUVOLA_STORE_SLUG?.trim() || "nuvola-market";
+  const idempotencyKey = request.headers.get("idempotency-key")?.trim() ?? "";
 
   let body: CheckoutRequest;
   try {
@@ -73,7 +74,10 @@ export async function POST(request: Request): Promise<NextResponse> {
   try {
     response = await fetch(`${base.replace(/\/$/, "")}/v1/public/orders`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        ...(idempotencyKey ? { "idempotency-key": idempotencyKey } : {}),
+      },
       body: JSON.stringify({
         storeSlug,
         customer: { name, email, city, region },
@@ -86,17 +90,27 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 
   const payload = (await response.json().catch(() => null)) as {
-    error?: { message?: string };
+    error?: { code?: string; message?: string };
     id?: string;
     number?: string;
   } | null;
 
   if (!response.ok) {
-    return fail(payload?.error?.message ?? "Checkout failed.", response.status);
+    return NextResponse.json(
+      {
+        error: payload?.error?.message ?? "Checkout failed.",
+        code: payload?.error?.code ?? null,
+      },
+      { status: response.status },
+    );
   }
 
   return NextResponse.json(
-    { orderId: payload?.id ?? null, orderNumber: payload?.number ?? null },
+    {
+      orderId: payload?.id ?? null,
+      orderNumber: payload?.number ?? null,
+      replayed: response.headers.get("idempotency-replayed") === "true",
+    },
     { status: 201 },
   );
 }
